@@ -1,0 +1,39 @@
+<h1>Listing generic_assets</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Main title</th>
+      <th>Alternate title</th>
+      <th>Type</th>
+      <th>Subjects</th>
+      <th>Creator</th>
+      <th>Photographer</th>
+      <th>Author</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @generic_assets.each do |generic_asset| %>
+      <tr>
+        <td><%= generic_asset.main_title %></td>
+        <td><%= generic_asset.alternate_title %></td>
+        <td><%= generic_asset.type %></td>
+        <td><%= generic_asset.subjects %></td>
+        <td><%= generic_asset.creator %></td>
+        <td><%= generic_asset.photographer %></td>
+        <td><%= generic_asset.author %></td>
+        <td><%= link_to 'Show', generic_asset %></td>
+        <td><%= link_to 'Edit', edit_generic_asset_path(generic_asset) %></td>
+        <td><%= link_to 'Destroy', generic_asset, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Generic asset', new_generic_asset_path %>

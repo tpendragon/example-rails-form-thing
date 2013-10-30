@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Main title:</strong>
+  <%= @generic_asset.main_title %>
+</p>
+
+<p>
+  <strong>Alternate title:</strong>
+  <%= @generic_asset.alternate_title %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @generic_asset.type %>
+</p>
+
+<p>
+  <strong>Subjects:</strong>
+  <%= @generic_asset.subjects %>
+</p>
+
+<p>
+  <strong>Creator:</strong>
+  <%= @generic_asset.creator %>
+</p>
+
+<p>
+  <strong>Photographer:</strong>
+  <%= @generic_asset.photographer %>
+</p>
+
+<p>
+  <strong>Author:</strong>
+  <%= @generic_asset.author %>
+</p>
+
+<%= link_to 'Edit', edit_generic_asset_path(@generic_asset) %> |
+<%= link_to 'Back', generic_assets_path %>
