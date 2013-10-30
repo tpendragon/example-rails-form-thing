@@ -38,6 +38,12 @@ end
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
+# Use pry
+gem 'pry'
+gem 'pry-doc'
+gem 'pry-debugger'
+gem 'pry-rails'
+
 # Use unicorn as the app server
 # gem 'unicorn'
 
