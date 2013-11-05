@@ -27,6 +27,7 @@ module DataStructure
 
     module ClassMethods
       def sections(*section_list)
+        raise RuntimeError.new("Cannot reassign sections") if @valid_sections
         @valid_sections = section_list
       end
 

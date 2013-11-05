@@ -54,10 +54,10 @@ class TestDecorator
 end
 
 describe DataStructure::Container do
-  context "decoration magic" do
-    let(:decoratee) { TestDelegatee.new }
-    subject { TestDecorator.new(decoratee) }
+  let(:decoratee) { TestDelegatee.new }
+  subject { TestDecorator.new(decoratee) }
 
+  context "decoration magic" do
     it "should create a new decorated object" do
       expect(subject).to be_kind_of(TestDecorator)
       expect(subject.object).to eql(decoratee)
@@ -74,6 +74,16 @@ describe DataStructure::Container do
 
     it "should override decorated object methods" do
       expect(subject.to_s).not_to eq(subject.object.to_s)
+    end
+  end
+
+  describe ".sections" do
+    it "should create valid section data" do
+      expect(subject.class.instance_variable_get("@valid_sections")).to eq([:asset_metadata, :other_data])
+    end
+
+    it "shouldn't allow assigning sections twice" do
+      expect { subject.class.sections :foo, :bar }.to raise_error(RuntimeError, /cannot reassign/i)
     end
   end
 end
