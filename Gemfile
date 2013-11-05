@@ -39,10 +39,14 @@ end
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
 # Use pry
-gem 'pry'
-gem 'pry-doc'
-gem 'pry-debugger'
-gem 'pry-rails'
+group :development, :test do
+  gem 'pry'
+  gem 'pry-doc'
+  gem 'pry-debugger'
+  gem 'pry-rails'
+
+  gem 'rspec-rails'
+end
 
 # Use unicorn as the app server
 # gem 'unicorn'
