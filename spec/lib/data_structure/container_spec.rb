@@ -95,4 +95,18 @@ describe DataStructure::Container do
       expect { TestDecorator.sections :foo, :bar }.to raise_error(RuntimeError, /cannot reassign/i)
     end
   end
+
+  describe ".attribute" do
+    it "should create a getter on the decorated class" do
+      expect { subject.foo }.to raise_error(NameError)
+      TestDecorator.attribute :foo, section: :other_data
+      expect { subject.foo }.not_to raise_error
+    end
+
+    it "should create a setter on the decorated class" do
+      expect { subject.foo = 1 }.to raise_error(NameError)
+      TestDecorator.attribute :foo, section: :other_data
+      expect { subject.foo = 1 }.not_to raise_error
+    end
+  end
 end
