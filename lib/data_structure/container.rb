@@ -34,19 +34,19 @@ module DataStructure
       # Defines an attribute on the model
       def attribute(name, options = {}, &block)
         attr = AttributeDefinition.new(name, options)
-        if block
-          block.call(attr)
-        end
+        block.call(attr) if block
+
+        # TODO: If reader/writer already exist, spit out a warning of some kind
 
         @attributes << attr
 
-        # Define reader TODO: unless it already exists
+        # Define reader
         define_method(name) do
           @attributes ||= {}
           return @attributes[name]
         end
 
-        # Define writer TODO: unless it already exists
+        # Define writer
         define_method(name.to_s + "=") do |val|
           @attributes ||= {}
           @attributes[name] = val
