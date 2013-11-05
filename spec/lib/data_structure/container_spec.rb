@@ -92,7 +92,7 @@ describe DataStructure::Container do
     end
 
     it "shouldn't allow assigning sections twice" do
-      expect { subject.class.sections :foo, :bar }.to raise_error(RuntimeError, /cannot reassign/i)
+      expect { TestDecorator.sections :foo, :bar }.to raise_error(RuntimeError, /cannot reassign/i)
     end
   end
 end
