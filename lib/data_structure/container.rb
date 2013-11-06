@@ -55,6 +55,14 @@ module DataStructure
         attr = AttributeDefinition.new(name, options)
         block.call(attr) if block
 
+        # TODO: Make this only happen when necessary!
+        #
+        # If translation is necessary, add reader and writer
+        #
+        # When is translation necessary?
+        # - Subtypes - the top-level attribute is *always* a translation layer
+        # - "Forwarded" fields - the attribute methods need to call the real method
+
         reader = name
         writer = "#{name}="
 
@@ -65,17 +73,26 @@ module DataStructure
         @attributes << attr
         @attribute_names[name] = attr
 
-        # Define reader
+        # TODO: Make this read the source data!
         define_method(reader) do
           @attributes ||= {}
           return @attributes[name]
         end
 
-        # Define writer
+        # TODO: Make this write to the source data!
         define_method(writer) do |val|
           @attributes ||= {}
           @attributes[name] = val
         end
+
+        # TODO: Figure out the right way to make mass assignment work -
+        # specialized includes for specific ORMs?  Or just create a basic
+        # set_attributes method that doesn't use ORM stuff and has to be
+        # used directly from controllers?  Not sure here.
+        #
+        # Okay, for starters, set_attributes should be done in any case,
+        # and if ORM-specific stuff is needed, at least the basic setter
+        # can just be called instead of reimplemented.
       end
     end
   end
