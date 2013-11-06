@@ -14,10 +14,6 @@ describe DataStructure::Container do
       def delegation
         return 1
       end
-
-      def to_s
-        return "This is TestDelegatee's to_s method"
-      end
     end
 
     class TestDecorator
@@ -25,38 +21,8 @@ describe DataStructure::Container do
 
       sections :asset_metadata, :other_data
 
-      # Simplest case - attribute with no real rules
-      attribute :thing, section: :other_data
-
-      # Simple case - required attribute with no other rules
-      attribute :identifier, required: true, section: :other_data
-
-      # Semi-simple case - attribute with multiples allowed
-      attribute :subjects, required: true, section: :other_data, multiple: true
-
-      # Complex case - attribute with sub-types but no multiple values
-      attribute :option, required: true, section: :asset_metadata do |option|
-        option.subtype :first, delegation: :option_1
-        option.subtype :alternate, delegation: :option_2
-      end
-
-      # Complex case - attribute with sub-types and allowance for multiple values
-      attribute :titles, multiple: true, required: true, section: :asset_metadata do |title|
-        title.subtype :main, delegation: :main_title
-        title.subtype :alternate, delegation: :alt_title
-        title.subtype :parallel, delegation: :parallel_title
-        title.subtype :series, delegation: :series_name
-      end
-
-      # Local function operating on local data
-      def modify
-        @something ||= 0
-        @something += 1
-      end
-
-      # Another local function wheee
       def get
-        return @something
+        return 1
       end
     end
   end
@@ -77,7 +43,6 @@ describe DataStructure::Container do
     end
 
     it "should still respond to local methods" do
-      subject.modify
       expect(subject.get).to eq(1)
     end
 
