@@ -50,30 +50,39 @@ class GenericAssetStructure
     # behind-the-scenes magic which turns that into a dynamic attribute on the
     # model *and* the datastream.  That's pretty OD-specific, though, so I
     # need to think it through some.
-    title.subtype :main, delegation: :main_title
+    title.subtype :main, field: :main_title
 
-    title.subtype :alternate, delegation: :alt_title
-    title.subtype :parallel, delegation: :parallel_title
-    title.subtype :series, delegation: :series_name
+    title.subtype :alternate, field: :alt_title
+    title.subtype :parallel, field: :parallel_title
+
+    # If field isn't specified, it defaults to attribute name - for subtypes,
+    # this can be a bit confusing, because :series might mean something
+    # different in another attribute block, but both would use :series and
+    # :series= if field isn't specified.
+    title.subtype :series
   end
 
   # Not required, but otherwise similar to titles
   attribute :creators, multiple: true, section: :asset_metadata do |creator|
-    creator.subtype :creator, delegation: :creator
-    creator.subtype :photographer, delegation: :photographer
-    creator.subtype :author, delegation: :author
+    creator.subtype :creator
+    creator.subtype :photographer
+    creator.subtype :author
   end
 
+  # Simple field for allowing multiple subjects to be entered, requiring at
+  # least one.  The lack of subtypes means we have to specify the field
+  # directly at the top level.
+  attribute :subjects, multiple: true, required: true, section: :asset_metadata, field: :subject_array
+
   # `Type` field has no subtypes and doesn't allow multiple values, so it's
-  # just a standard text field with a label.  There is no need to delegate when
-  # no block is passed in, but we might allow that anyway.
+  # just a standard text field with a label.
   attribute :type, required: true, section: :asset_metadata
 
   # Administrative data goes in its own section - this would probably be read-only for most roles,
   # but for OD I think that would just be part of the decorator or something
   attribute :administrative, multiple: true, section: :extra_data do |admin_field|
-    admin_field.subtype :replaces, delegation: :admin_replaces
-    admin_field.subtype :full, delegation: :original_full_asset_path
-    admin_field.subtype :conversion_specifications, delegation: :admin_conversion_spec
+    admin_field.subtype :replaces, field: :admin_replaces
+    admin_field.subtype :full, field: :original_full_asset_path
+    admin_field.subtype :conversion_specifications, field: :admin_conversion_spec
   end
 end
