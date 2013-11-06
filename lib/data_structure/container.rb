@@ -35,6 +35,8 @@ module DataStructure
     end
 
     module ClassMethods
+      attr_reader :valid_sections
+
       def sections(*section_list)
         raise RuntimeError.new("Cannot reassign sections") if @valid_sections
         @valid_sections = section_list
@@ -42,18 +44,10 @@ module DataStructure
 
       # Defines an attribute on the model
       def attribute(name, options = {}, &block)
-        section = options[:section]
-        if @valid_sections
-          raise RuntimeError.new("Must specify :section option") unless section
-          raise RuntimeError.new("Invalid section #{section.inspect}") unless @valid_sections.include?(section)
-        else
-          raise RuntimeError.new("May not specify :section option without first defining sections") if section
-        end
-
         raise RuntimeError.new("Attribute #{name.inspect} may not be specified twice") if @attribute_names[name]
 
-        attr = AttributeDefinition.new(name, options)
-        block.call(attr) if block
+        attr = AttributeDefinition.new(self, name, options, &block)
+        attr.validate_section!
 
         # TODO: Make this only happen when necessary!
         #
@@ -99,12 +93,27 @@ module DataStructure
 end
 
 class AttributeDefinition
-  attr_accessor :name, :subtypes, :opts
+  attr_accessor :context_class, :name, :subtypes, :opts, :section
 
-  def initialize(name, opts = {})
+  def initialize(context_class, name, opts = {}, &block)
+    @context_class = context_class
     @name = name
     @opts = opts
     @subtypes = []
+    @section = opts[:section]
+
+    block.call(self) if block
+  end
+
+  def validate_section!
+    sections = context_class.valid_sections
+    if !sections
+      return if !section
+      raise RuntimeError.new("Class must define valid sections before attributes may use sections")
+    end
+
+    raise RuntimeError.new("Class requires a :section option") unless section
+    raise RuntimeError.new("Invalid section #{section.inspect}") unless sections.include?(section)
   end
 
   def subtype(name, opts = {})
