@@ -41,6 +41,14 @@ module DataStructure
 
       # Defines an attribute on the model
       def attribute(name, options = {}, &block)
+        section = options[:section]
+        if @valid_sections
+          raise RuntimeError.new("Must specify :section option") unless section
+          raise RuntimeError.new("Invalid section #{section.inspect}") unless @valid_sections.include?(section)
+        else
+          raise RuntimeError.new("May not specify :section option without first defining sections") if section
+        end
+
         attr = AttributeDefinition.new(name, options)
         block.call(attr) if block
 

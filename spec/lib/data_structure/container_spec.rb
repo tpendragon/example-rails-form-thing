@@ -97,6 +97,34 @@ describe DataStructure::Container do
   end
 
   describe ".attribute" do
+    context "(when sections are specified)" do
+      it "should work if a valid section is given" do
+        expect { TestDecorator.attribute :foo, section: :other_data }.not_to raise_error
+      end
+
+      it "should raise an error if section is omitted" do
+        expect { TestDecorator.attribute :foo }.to raise_error(RuntimeError, /section/)
+      end
+
+      it "should raise an error if an invalid section is given" do
+        expect { TestDecorator.attribute :foo, section: :invalid }.to raise_error(RuntimeError, /section/)
+      end
+    end
+
+    context "(when no sections are specified)" do
+      before(:each) do
+        TestDecorator.send(:remove_instance_variable, "@valid_sections")
+      end
+
+      it "should work if no section is given" do
+        expect { TestDecorator.attribute :foo }.not_to raise_error
+      end
+
+      it "should raise an error if a section is given" do
+        expect { TestDecorator.attribute :foo, section: :other_data }.to raise_error(RuntimeError, /section/)
+      end
+    end
+
     it "should create a getter on the decorated class" do
       expect { subject.foo }.to raise_error(NameError)
       TestDecorator.attribute :foo, section: :other_data
