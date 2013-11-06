@@ -137,6 +137,14 @@ describe DataStructure::Container do
       expect { subject.foo = 1 }.not_to raise_error
     end
 
+    context "(when an attribute by the same name is already defined)" do
+      it "should raise an exception" do
+        TestDecorator.attribute :foo, section: :other_data
+        error_match = /:foo may not be specified twice/i
+        expect { TestDecorator.attribute :foo, section: :other_data }.to raise_error(RuntimeError, error_match)
+      end
+    end
+
     context "(when the getter or setter override existing methods)" do
       it "should raise an exception" do
         expect { TestDecorator.attribute :to_s, section: :other_data }.to raise_error(RuntimeError, /override/)

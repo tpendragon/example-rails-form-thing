@@ -10,6 +10,7 @@ module DataStructure
       attr_reader :object, :attributes
 
       @attributes = []
+      @attribute_names = {}
     end
 
     # TODO: This part only works if defining a decorator, but will break if
@@ -49,6 +50,8 @@ module DataStructure
           raise RuntimeError.new("May not specify :section option without first defining sections") if section
         end
 
+        raise RuntimeError.new("Attribute #{name.inspect} may not be specified twice") if @attribute_names[name]
+
         attr = AttributeDefinition.new(name, options)
         block.call(attr) if block
 
@@ -60,6 +63,7 @@ module DataStructure
         end
 
         @attributes << attr
+        @attribute_names[name] = attr
 
         # Define reader
         define_method(reader) do
