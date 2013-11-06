@@ -21,8 +21,16 @@ module DataStructure
 
     # TODO: Same note as above - this is only necessary for decorators
     def method_missing(method, *args, &block)
-      return super unless object.respond_to?(method)
+      return super unless delegatable?(method)
       object.send(method, *args, &block)
+    end
+
+    def respond_to_missing?(method, include_private = false)
+      return super || delegatable?(method)
+    end
+
+    def delegatable?(method)
+      return object.respond_to?(method)
     end
 
     module ClassMethods
@@ -36,18 +44,23 @@ module DataStructure
         attr = AttributeDefinition.new(name, options)
         block.call(attr) if block
 
-        # TODO: If reader/writer already exist, spit out a warning of some kind
+        reader = name
+        writer = "#{name}="
+
+        if respond_to?(reader) || respond_to?(writer)
+          raise RuntimeError.new("Cannot define an attribute which overrides existing methods (#{name.inspect})")
+        end
 
         @attributes << attr
 
         # Define reader
-        define_method(name) do
+        define_method(reader) do
           @attributes ||= {}
           return @attributes[name]
         end
 
         # Define writer
-        define_method(name.to_s + "=") do |val|
+        define_method(writer) do |val|
           @attributes ||= {}
           @attributes[name] = val
         end
