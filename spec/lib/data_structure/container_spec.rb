@@ -99,13 +99,15 @@ describe DataStructure::Container do
 
       it "should create a getter on the decorated class" do
         expect { subject.foo }.to raise_error(NameError)
-        TestDecorator.attribute :foo, section: :other_data
+        subject.class.send(:attr_accessor, :bar)
+        TestDecorator.attribute :foo, section: :other_data, field: :bar
         expect { subject.foo }.not_to raise_error
       end
 
       it "should create a setter on the decorated class" do
         expect { subject.foo = 1 }.to raise_error(NameError)
-        TestDecorator.attribute :foo, section: :other_data
+        subject.class.send(:attr_accessor, :bar)
+        TestDecorator.attribute :foo, section: :other_data, field: :bar
         expect { subject.foo = 1 }.not_to raise_error
       end
 
@@ -155,6 +157,7 @@ describe DataStructure::Container do
   context "(data translation)" do
     context "(when data is simply forwarded)" do
       before(:each) do
+        subject.class.send(:attr_accessor, :bar)
         TestDecorator.attribute :foo, section: :other_data, field: :bar
       end
 

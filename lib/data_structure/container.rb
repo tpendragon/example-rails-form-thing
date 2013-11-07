@@ -132,15 +132,48 @@ class AttributeTranslator
   def initialize(context_model, attr)
     @context_model = context_model
     @attribute_definition = attr
+
+    setup_translators
   end
 
-  # TODO: Access model and use options to figure out how to retrieve this value
+  def translation_type
+    return :subtype_array if @attribute_definition.subtypes.any?
+    return :field_forward if @attribute_definition.field != @attribute_definition.name
+
+    raise "Cannot determine translation type!"
+  end
+
+  def setup_translators
+    case translation_type
+      when :subtype_array
+        @reader = method(:get_subtype_data)
+        @writer = method(:set_subtype_data)
+
+      when :field_forward
+        # TODO: allow for more complex forwarding to allow for just sending straight
+        # through the model and into its datastream?
+        reader = @attribute_definition.field
+        writer = "#{reader}="
+        @reader = @context_model.method(reader)
+        @writer = @context_model.method(writer)
+    end
+  end
+
+  # TODO: Implement me!
+  def get_subtype_data
+    @value
+  end
+
   def get
-    return @value
+    return @reader.call
   end
 
-  # TODO: Access model and use options to figure out how to set this value
-  def set(val)
+  # TODO: Implement me!
+  def set_subtype_data(val)
     @value = val
+  end
+
+  def set(val)
+    return @writer.call(val)
   end
 end
