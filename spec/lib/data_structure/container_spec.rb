@@ -157,14 +157,19 @@ describe DataStructure::Container do
   context "(data translation)" do
     context "(when data is simply forwarded)" do
       before(:each) do
-        subject.class.send(:attr_accessor, :bar)
+        subject.stub(:bar)
+        subject.stub(:bar=)
         TestDecorator.attribute :foo, section: :other_data, field: :bar
       end
 
-      it "should retrieve what was set" do
-        val = "testing"
-        subject.foo = val
-        expect(subject.foo).to eq(val)
+      it "should retrieve data from the defined field" do
+        expect(subject).to receive(:bar).once.and_return("test")
+        expect(subject.foo).to eq("test")
+      end
+
+      it "should send data to the defined field" do
+        expect(subject).to receive(:bar=).once
+        subject.foo = 1
       end
     end
 
