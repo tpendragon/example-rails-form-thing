@@ -73,13 +73,13 @@ module DataStructure
 
         define_method(reader) do
           @attributes ||= {}
-          @attributes[name] ||= AttributeInstance.new(self, attribute)
+          @attributes[name] ||= AttributeTranslator.new(self, attribute)
           return @attributes[name]._get
         end
 
         define_method(writer) do |val|
           @attributes ||= {}
-          @attributes[name] ||= AttributeInstance.new(self, attribute)
+          @attributes[name] ||= AttributeTranslator.new(self, attribute)
           @attributes[name]._set(val)
         end
       end
@@ -128,7 +128,7 @@ class AttributeDefinition
   end
 end
 
-class AttributeInstance
+class AttributeTranslator
   def initialize(context_model, attr)
     @context_model = context_model
     @attribute_definition = attr
