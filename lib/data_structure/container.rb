@@ -74,13 +74,13 @@ module DataStructure
         define_method(reader) do
           @attributes ||= {}
           @attributes[name] ||= AttributeTranslator.new(self, attribute)
-          return @attributes[name]._get
+          return @attributes[name].get
         end
 
         define_method(writer) do |val|
           @attributes ||= {}
           @attributes[name] ||= AttributeTranslator.new(self, attribute)
-          @attributes[name]._set(val)
+          @attributes[name].set(val)
         end
       end
     end
@@ -135,12 +135,12 @@ class AttributeTranslator
   end
 
   # TODO: Access model and use options to figure out how to retrieve this value
-  def _get
+  def get
     return @value
   end
 
   # TODO: Access model and use options to figure out how to set this value
-  def _set(val)
+  def set(val)
     @value = val
   end
 end
