@@ -74,13 +74,15 @@ module DataStructure
         # TODO: Make this read the source data!
         define_method(reader) do
           @attributes ||= {}
-          return @attributes[name]
+          @attributes[name] ||= AttributeInstance.new(attribute)
+          return @attributes[name]._get
         end
 
         # TODO: Make this write to the source data!
         define_method(writer) do |val|
           @attributes ||= {}
-          @attributes[name] = val
+          @attributes[name] ||= AttributeInstance.new(attribute)
+          @attributes[name]._set(val)
         end
       end
     end
@@ -128,6 +130,10 @@ class AttributeDefinition
 end
 
 class AttributeInstance
+  def initialize(attr)
+    @attribute_definition = attr
+  end
+
   # TODO: Access model and use options to figure out how to retrieve this value
   def _get
     return @value
