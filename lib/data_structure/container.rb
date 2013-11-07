@@ -2,6 +2,15 @@ require 'active_support'
 
 # Minimal code to make the prototype work.  This code will ABSOLUTELY SUCK.
 # It's not meant for long-term use!
+#
+# TODO: Figure out the right way to make mass assignment work - specialized
+# includes for specific ORMs?  Or just create a basic set_attributes method
+# that doesn't use ORM stuff and has to be used directly from controllers?  Not
+# sure here.
+#
+# Okay, for starters, set_attributes should be done in any case, and if
+# ORM-specific stuff is needed, at least the basic setter can just be called
+# instead of reimplemented.
 module DataStructure
   module Container
     extend ActiveSupport::Concern
@@ -76,15 +85,6 @@ module DataStructure
           @attributes ||= {}
           @attributes[name] = val
         end
-
-        # TODO: Figure out the right way to make mass assignment work -
-        # specialized includes for specific ORMs?  Or just create a basic
-        # set_attributes method that doesn't use ORM stuff and has to be
-        # used directly from controllers?  Not sure here.
-        #
-        # Okay, for starters, set_attributes should be done in any case,
-        # and if ORM-specific stuff is needed, at least the basic setter
-        # can just be called instead of reimplemented.
       end
     end
   end
