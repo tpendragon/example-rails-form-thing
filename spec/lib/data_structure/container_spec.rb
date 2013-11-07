@@ -151,4 +151,33 @@ describe DataStructure::Container do
       end
     end
   end
+
+  context "(data translation)" do
+    context "(when data is simply forwarded)" do
+      before(:each) do
+        TestDecorator.attribute :foo, section: :other_data, field: :bar
+      end
+
+      it "should retrieve what was set" do
+        val = "testing"
+        subject.foo = val
+        expect(subject.foo).to eq(val)
+      end
+    end
+
+    context "(when data is translated to subtypes)" do
+      before(:each) do
+        TestDecorator.attribute :foo, section: :other_data do |foo|
+          foo.subtype :bar
+          foo.subtype :baz, field: :qux
+        end
+      end
+
+      it "should retrieve what was set" do
+        val = [{type: :bar, value: "this is bar"}, {type: :baz, value: "this is baz, but its field is qux"}]
+        subject.foo = val
+        expect(subject.foo).to eq(val)
+      end
+    end
+  end
 end
