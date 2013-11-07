@@ -71,17 +71,15 @@ module DataStructure
           raise RuntimeError.new("Cannot define an attribute which overrides existing methods (#{name.inspect})")
         end
 
-        # TODO: Make this read the source data!
         define_method(reader) do
           @attributes ||= {}
-          @attributes[name] ||= AttributeInstance.new(attribute)
+          @attributes[name] ||= AttributeInstance.new(self, attribute)
           return @attributes[name]._get
         end
 
-        # TODO: Make this write to the source data!
         define_method(writer) do |val|
           @attributes ||= {}
-          @attributes[name] ||= AttributeInstance.new(attribute)
+          @attributes[name] ||= AttributeInstance.new(self, attribute)
           @attributes[name]._set(val)
         end
       end
@@ -131,7 +129,8 @@ class AttributeDefinition
 end
 
 class AttributeInstance
-  def initialize(attr)
+  def initialize(context_model, attr)
+    @context_model = context_model
     @attribute_definition = attr
   end
 
