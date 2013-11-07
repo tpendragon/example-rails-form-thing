@@ -91,13 +91,15 @@ module DataStructure
 end
 
 class AttributeDefinition
-  attr_accessor :name, :subtypes, :opts, :section
+  attr_accessor :name, :subtypes, :section, :field, :required, :multiple
 
   def initialize(name, opts = {}, &block)
     @name = name
-    @opts = opts
     @subtypes = []
     @section = opts[:section]
+    @field = opts.fetch(:field, @name)
+    @multiple = opts.fetch(:multiple, false)
+    @required = opts.fetch(:required, false)
 
     block.call(self) if block
   end
