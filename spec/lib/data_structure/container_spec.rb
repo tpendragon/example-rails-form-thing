@@ -61,6 +61,8 @@ describe DataStructure::Container do
     end
   end
 
+  # Some of this belongs on the attribute classes, but as those are even less
+  # certain than the container class, testing will go here for now
   describe ".attribute" do
     context "(when sections are specified)" do
       it "should work if a valid section is given" do
@@ -90,38 +92,44 @@ describe DataStructure::Container do
       end
     end
 
-    it "should create a getter on the decorated class" do
-      expect { subject.foo }.to raise_error(NameError)
-      TestDecorator.attribute :foo, section: :other_data
-      expect { subject.foo }.not_to raise_error
-    end
+    context "(when translation is necessary)" do
+      before(:each) do
+        AttributeDefinition.any_instance.stub(:needs_translation? => true)
+      end
 
-    it "should create a setter on the decorated class" do
-      expect { subject.foo = 1 }.to raise_error(NameError)
-      TestDecorator.attribute :foo, section: :other_data
-      expect { subject.foo = 1 }.not_to raise_error
-    end
-
-    context "(when an attribute by the same name is already defined)" do
-      it "should raise an exception" do
+      it "should create a getter on the decorated class" do
+        expect { subject.foo }.to raise_error(NameError)
         TestDecorator.attribute :foo, section: :other_data
-        error_match = /:foo may not be specified twice/i
-        expect { TestDecorator.attribute :foo, section: :other_data }.to raise_error(RuntimeError, error_match)
-      end
-    end
-
-    context "(when the getter or setter override existing methods)" do
-      it "should raise an exception" do
-        expect { TestDecorator.attribute :to_s, section: :other_data }.to raise_error(RuntimeError, /override/)
+        expect { subject.foo }.not_to raise_error
       end
 
-      it "should not modify the class" do
-        stringified = subject.to_s
+      it "should create a setter on the decorated class" do
+        expect { subject.foo = 1 }.to raise_error(NameError)
+        TestDecorator.attribute :foo, section: :other_data
+        expect { subject.foo = 1 }.not_to raise_error
+      end
 
-        # Ignore the error without testing for error specifics
-        expect { TestDecorator.attribute :to_s, section: :other_data }.to raise_error
+      context "(when an attribute by the same name is already defined)" do
+        it "should raise an exception" do
+          TestDecorator.attribute :foo, section: :other_data
+          error_match = /:foo may not be specified twice/i
+          expect { TestDecorator.attribute :foo, section: :other_data }.to raise_error(RuntimeError, error_match)
+        end
+      end
 
-        expect(subject.to_s).to eq(stringified)
+      context "(when the getter or setter override existing methods)" do
+        it "should raise an exception" do
+          expect { TestDecorator.attribute :to_s, section: :other_data }.to raise_error(RuntimeError, /override/)
+        end
+
+        it "should not modify the class" do
+          stringified = subject.to_s
+
+          # Ignore the error without testing for error specifics
+          expect { TestDecorator.attribute :to_s, section: :other_data }.to raise_error
+
+          expect(subject.to_s).to eq(stringified)
+        end
       end
     end
   end

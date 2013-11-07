@@ -56,23 +56,20 @@ module DataStructure
         attr = AttributeDefinition.new(name, options, &block)
         attr.validate_section!(@valid_sections)
 
-        # TODO: Make this only happen when necessary!
-        #
-        # If translation is necessary, add reader and writer
-        #
-        # When is translation necessary?
-        # - Subtypes - the top-level attribute is *always* a translation layer
-        # - "Forwarded" fields - the attribute methods need to call the real method
+        add_translation_methods(attr) if attr.needs_translation?
 
+        @attributes << attr
+        @attribute_names[name] = attr
+      end
+
+      def add_translation_methods(attribute)
+        name = attribute.name
         reader = name
         writer = "#{name}="
 
         if respond_to?(reader) || respond_to?(writer)
           raise RuntimeError.new("Cannot define an attribute which overrides existing methods (#{name.inspect})")
         end
-
-        @attributes << attr
-        @attribute_names[name] = attr
 
         # TODO: Make this read the source data!
         define_method(reader) do
@@ -116,6 +113,17 @@ class AttributeDefinition
 
   def subtype(name, opts = {})
     subtypes << AttributeDefinition.new(name, opts)
+  end
+
+  # Is translation necessary?  i.e., will the base class need a reader/writer
+  # method to get and set the data?
+  #
+  # When is translation necessary?
+  # - Subtypes - the top-level attribute is *always* a translation layer because it will receive
+  #   a hash of complex data which need to be translated into the various attributes
+  # - "Forwarded" fields - the attribute methods need to call the real method
+  def needs_translation?
+    return @field != @name || @subtypes.any?
   end
 end
 
