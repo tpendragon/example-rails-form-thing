@@ -114,7 +114,8 @@ class AttributeDefinition
   end
 
   def subtype(name, opts = {})
-    subtypes << AttributeDefinition.new(name, opts)
+    # Subtypes can only have a name and a field delegation for now
+    subtypes << AttributeDefinition.new(name, {field: opts[:field]})
   end
 
   # Is translation necessary?  i.e., will the base class need a reader/writer
