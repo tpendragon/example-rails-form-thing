@@ -132,5 +132,23 @@ describe DataStructure::Container do
         end
       end
     end
+
+    context "(when translation isn't necessary)" do
+      before(:each) do
+        AttributeDefinition.any_instance.stub(:needs_translation? => false)
+      end
+
+      it "should create a getter on the decorated class" do
+        expect { subject.foo }.to raise_error(NameError)
+        TestDecorator.attribute :foo, section: :other_data
+        expect { subject.foo }.to raise_error(NameError)
+      end
+
+      it "should create a setter on the decorated class" do
+        expect { subject.foo = 1 }.to raise_error(NameError)
+        TestDecorator.attribute :foo, section: :other_data
+        expect { subject.foo = 1 }.to raise_error(NameError)
+      end
+    end
   end
 end
