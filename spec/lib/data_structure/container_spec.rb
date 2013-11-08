@@ -246,4 +246,18 @@ describe DataStructure::Container do
       end
     end
   end
+
+  describe "#assign_attributes" do
+    it "should dispatch simple data to *= methods" do
+      expect(subject).to receive(:foo=).with(1)
+      expect(subject).to receive(:bar=).with(2)
+      subject.assign_attributes(foo: 1, bar: 2)
+    end
+
+    it "should not try to set data if data exists with a name that doesn't have a corresponding writer" do
+      expect {
+        subject.assign_attributes(foo: "bar")
+      }.to raise_error(NotImplementedError)
+    end
+  end
 end
