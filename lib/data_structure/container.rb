@@ -171,6 +171,7 @@ class AttributeTranslator
     data = []
     for attr in @attribute_definition.subtypes
       value = @context_model.method(attr.field).call
+      next if value.nil?
       value = [value] unless value.is_a?(Array)
       value.each {|val| data.push(type: attr.name, value: val)}
     end
@@ -182,8 +183,9 @@ class AttributeTranslator
     return @reader.call
   end
 
-  # Converts all hashes into subtype values
-  def set_subtype_data(values)
+  # Converts all hashes into subtype values, not affecting subtype data which
+  # isn't explicitly set in the array of values
+  def attributes=(values)
     data = Hash.new
 
     # First aggregate the values so we have a type-to-value map, and we ensure
@@ -199,6 +201,16 @@ class AttributeTranslator
       subtype = @attribute_definition.subtype_lookup[subtype_name]
       @context_model.method(subtype.field.to_s + "=").call(values)
     end
+  end
+
+  # Converts all hashes into subtype values, clearing any subtypes that don't
+  # have an item in the values array
+  def set_subtype_data(values)
+    for attr in @attribute_definition.subtypes
+      @context_model.method(attr.field.to_s + "=").call(nil)
+    end
+
+    self.attributes = values
   end
 
   def set(val)

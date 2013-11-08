@@ -202,15 +202,15 @@ describe DataStructure::Container do
       end
 
       context "(writer)" do
-        # This actually doesn't make sense if we're treating the attribute as a normal Ruby accessor.
-        # TODO: Make this act more like activemodel in this case, via foo_attributes?  Or just go with
-        # overwriting data?
-        it "shouldn't change sub-attribute data that isn't explicitly part of the set value" do
-          subject.qux = "I will survive"
-          subject.bar = "I won't"
-          expect(subject.foo).to eq([{type: :bar, value: "I won't"}, {type: :baz, value: "I will survive"}])
-          subject.foo = [{type: :bar, value: "test"}]
-          expect(subject.foo).to eq([{type: :bar, value: "test"}, {type: :baz, value: "I will survive"}])
+        it "should completely overwrite sub-attribute data" do
+          subject.bar = "I will be removed"
+          subject.qux = "I will be replaced"
+          expect(subject.foo).to eq([
+            {type: :bar, value: "I will be removed"},
+            {type: :baz, value: "I will be replaced"}
+          ])
+          subject.foo = [{type: :baz, value: "test"}]
+          expect(subject.foo).to eq([{type: :baz, value: "test"}])
         end
 
         it "should translate and store the data on the subtype variables" do
