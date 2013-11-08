@@ -89,7 +89,7 @@ module DataStructure
 end
 
 class AttributeDefinition
-  attr_accessor :name, :subtypes, :section, :field, :required, :multiple
+  attr_accessor :name, :subtypes, :section, :field, :required, :multiple, :subtype_lookup
 
   def initialize(name, opts = {}, &block)
     @name = name
@@ -98,6 +98,7 @@ class AttributeDefinition
     @field = opts.fetch(:field, @name)
     @multiple = opts.fetch(:multiple, false)
     @required = opts.fetch(:required, false)
+    @subtype_lookup = {}
 
     block.call(self) if block
   end
@@ -114,7 +115,9 @@ class AttributeDefinition
 
   def subtype(name, opts = {})
     # Subtypes can only have a name and a field delegation for now
-    subtypes << OpenStruct.new(name: name, field: opts[:field] || name)
+    attr = OpenStruct.new(name: name, field: opts[:field] || name)
+    subtypes << attr
+    subtype_lookup[name] = attr
   end
 
   # Is translation necessary?  i.e., will the base class need a reader/writer
