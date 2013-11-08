@@ -36,10 +36,12 @@ module DataStructure
       object.send(method, *args, &block)
     end
 
+    # TODO: Same note as above - this is only necessary for decorators
     def respond_to_missing?(method, include_private = false)
       return super || delegatable?(method)
     end
 
+    # TODO: Same note as above - this is only necessary for decorators
     def delegatable?(method)
       return object.respond_to?(method)
     end
