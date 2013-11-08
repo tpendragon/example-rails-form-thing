@@ -225,6 +225,25 @@ describe DataStructure::Container do
           expect(subject.qux).to eq(["non-array data becomes array data"])
         end
       end
+
+      context "(attributes writer)" do
+        it "should not change sub-attribute data that isn't explicitly part of the set value" do
+          subject.bar = "I will be removed"
+          subject.qux = "I will be left alone"
+          expect(subject.foo).to eq([
+            {type: :bar, value: "I will be removed"},
+            {type: :baz, value: "I will be left alone"}
+          ])
+          subject.foo_attributes = [{type: :bar, value: "test"}]
+          expect(subject.foo).to eq([{type: :bar, value: "test"}, {type: :baz, value: "I will be left alone"}])
+        end
+
+        it "should translate and store the data on the subtype variables" do
+          subject.foo_attributes = [{type: :bar, value: 1}, {type: :baz, value: "test"}]
+          expect(subject.bar).to eq([1])
+          expect(subject.qux).to eq(["test"])
+        end
+      end
     end
   end
 end

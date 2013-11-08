@@ -86,6 +86,14 @@ module DataStructure
           prepare_attribute(name)
           @attributes[name].set(val)
         end
+
+        if attribute.needs_attributes_writer?
+          attribute_writer = "#{name}_attributes="
+          define_method(attribute_writer) do |val|
+            prepare_attribute(name)
+            @attributes[name].attributes = val
+          end
+        end
       end
     end
   end
@@ -132,6 +140,10 @@ class AttributeDefinition
   # - "Forwarded" fields - the attribute methods need to call the real method
   def needs_translation?
     return @field != @name || @subtypes.any?
+  end
+
+  def needs_attributes_writer?
+    return @subtypes.any?
   end
 end
 
