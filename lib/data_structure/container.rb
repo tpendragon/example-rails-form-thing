@@ -1,4 +1,5 @@
 require 'active_support'
+require 'ostruct'
 
 # Minimal code to make the prototype work.  This code will ABSOLUTELY SUCK.
 # It's not meant for long-term use!
@@ -113,7 +114,7 @@ class AttributeDefinition
 
   def subtype(name, opts = {})
     # Subtypes can only have a name and a field delegation for now
-    subtypes << AttributeDefinition.new(name, {field: opts[:field]})
+    subtypes << OpenStruct.new(name: name, field: opts[:field] || name)
   end
 
   # Is translation necessary?  i.e., will the base class need a reader/writer
