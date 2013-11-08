@@ -163,18 +163,39 @@ class AttributeTranslator
     end
   end
 
-  # TODO: Implement me!
+  # Converts each value for each subtype into a hash of type and value
   def get_subtype_data
-    @value
+    data = []
+    for attr in @attribute_definition.subtypes
+      value = @context_model.method(attr.field).call
+      value = [value] unless value.is_a?(Array)
+      value.each {|val| data.push(type: attr.name, value: val)}
+    end
+
+    return data
   end
 
   def get
     return @reader.call
   end
 
-  # TODO: Implement me!
-  def set_subtype_data(val)
-    @value = val
+  # Converts all hashes into subtype values
+  def set_subtype_data(values)
+    data = Hash.new
+
+    # First aggregate the values so we have a type-to-value map, and we ensure
+    # that all values are getting array-ified
+    for hash in values
+      type = hash[:type]
+      data[type] ||= []
+      data[type].push(hash[:value])
+    end
+
+    # Now do the assignments
+    for subtype_name, values in data
+      subtype = @attribute_definition.subtype_lookup[subtype_name]
+      @context_model.method(subtype.field.to_s + "=").call(values)
+    end
   end
 
   def set(val)

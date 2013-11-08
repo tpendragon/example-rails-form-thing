@@ -175,6 +175,7 @@ describe DataStructure::Container do
 
     context "(when data is translated to subtypes)" do
       before(:each) do
+        TestDecorator.send(:attr_accessor, :bar, :qux)
         TestDecorator.attribute :foo, section: :other_data do |foo|
           foo.subtype :bar
           foo.subtype :baz, field: :qux
