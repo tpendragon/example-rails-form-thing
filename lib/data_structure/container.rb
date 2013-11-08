@@ -72,15 +72,18 @@ module DataStructure
           raise RuntimeError.new("Cannot define an attribute which overrides existing methods (#{name.inspect})")
         end
 
-        define_method(reader) do
+        define_method(:prepare_attribute) do |name|
           @attributes ||= {}
           @attributes[name] ||= AttributeTranslator.new(self, attribute)
+        end
+
+        define_method(reader) do
+          prepare_attribute(name)
           return @attributes[name].get
         end
 
         define_method(writer) do |val|
-          @attributes ||= {}
-          @attributes[name] ||= AttributeTranslator.new(self, attribute)
+          prepare_attribute(name)
           @attributes[name].set(val)
         end
       end
