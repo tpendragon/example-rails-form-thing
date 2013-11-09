@@ -15,12 +15,17 @@ ActiveRecord::Schema.define(version: 20131030202456) do
 
   create_table "generic_assets", force: true do |t|
     t.string   "main_title"
-    t.string   "alternate_title"
-    t.string   "type"
-    t.string   "subjects"
+    t.string   "alt_title"
+    t.string   "parallel_title"
+    t.string   "series"
     t.string   "creator"
     t.string   "photographer"
     t.string   "author"
+    t.string   "subjects"
+    t.string   "type"
+    t.string   "admin_replaces"
+    t.string   "original_full_asset_path"
+    t.string   "admin_conversion_spec"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
