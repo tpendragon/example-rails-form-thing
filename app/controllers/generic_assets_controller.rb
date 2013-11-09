@@ -1,3 +1,5 @@
+require_relative '../decorators/generic_asset_structure'
+
 class GenericAssetsController < ApplicationController
   before_action :set_generic_asset, only: [:show, :edit, :update, :destroy]
 

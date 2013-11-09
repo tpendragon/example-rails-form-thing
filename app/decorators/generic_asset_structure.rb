@@ -1,3 +1,5 @@
+require "#{Rails.root}/lib/data_structure/container"
+
 # API (WIP) for a generic form "structure decorator" which would allow one to
 # declare form groupings and how to delegate to the model method(s).  Assumes
 # simple_form for now, as its labeling, hint, and placeholder systems are
