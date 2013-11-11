@@ -1,12 +1,11 @@
-require "#{Rails.root}/lib/data_structure/container"
+require "#{Rails.root}/lib/data_structure/container_decorator"
 
 # API (WIP) for a generic form "structure decorator" which would allow one to
 # declare form groupings and how to delegate to the model method(s).  Assumes
 # simple_form for now, as its labeling, hint, and placeholder systems are
 # already well-defined and offer a lot of flexibility.
-class GenericAssetStructure
-  # Core stuff will exist here to enable all the magic below
-  include DataStructure::Container
+class GenericAssetStructure < DataStructure::ContainerDecorator
+  decorates GenericAsset
 
   # Maybe something like this so that attribute declarations can be validated
   # as belonging to a legitimate section?  I'm not sure I like this vs.

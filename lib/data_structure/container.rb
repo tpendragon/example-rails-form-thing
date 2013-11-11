@@ -8,33 +8,10 @@ module DataStructure
     extend ActiveSupport::Concern
 
     included do
-      attr_reader :object, :attributes
+      attr_reader :attributes
 
       @attributes = []
       @attribute_names = {}
-    end
-
-    # TODO: This part only works if defining a decorator, but will break if
-    # used directly on an ORM model.  Need to make this work in both cases by
-    # splitting up decorator behaviors from core data structure stuff.
-    def initialize(object)
-      @object = object
-    end
-
-    # TODO: Same note as above - this is only necessary for decorators
-    def method_missing(method, *args, &block)
-      return super unless delegatable?(method)
-      object.send(method, *args, &block)
-    end
-
-    # TODO: Same note as above - this is only necessary for decorators
-    def respond_to_missing?(method, include_private = false)
-      return super || delegatable?(method)
-    end
-
-    # TODO: Same note as above - this is only necessary for decorators
-    def delegatable?(method)
-      return object.respond_to?(method)
     end
 
     # Magic delegator to send a hash of data to the appropriate writers

@@ -1,9 +1,9 @@
 # NOTE: Tests are going to be as bad as the prototype code itself until things are more finalized
 
 # Isolated testing for speed
-require_relative "../../../lib/data_structure/container"
+require_relative "../../../lib/data_structure/container_decorator"
 
-describe DataStructure::Container do
+describe DataStructure::ContainerDecorator do
   let(:decoratee) { TestDelegatee.new }
   subject { TestDecorator.new(decoratee) }
 
@@ -16,9 +16,8 @@ describe DataStructure::Container do
       end
     end
 
-    class TestDecorator
-      include DataStructure::Container
-
+    class TestDecorator < DataStructure::ContainerDecorator
+      decorates TestDelegatee
       sections :asset_metadata, :other_data
 
       def get
