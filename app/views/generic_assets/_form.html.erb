@@ -2,13 +2,15 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :main_title %>
-    <%= f.input :alt_title %>
-    <%= f.input :type %>
-    <%= f.input :subjects %>
-    <%= f.input :creator %>
-    <%= f.input :photographer %>
-    <%= f.input :author %>
+    <% for section in @generic_asset.renderer.sections %>
+      <fieldset>
+        <legend><%= section.label %></legend>
+
+        <% for attribute in section.attributes %>
+          <%= attribute.field %>
+        <% end %>
+      </fieldset>
+    <% end %>
   </div>
 
   <div class="form-actions">

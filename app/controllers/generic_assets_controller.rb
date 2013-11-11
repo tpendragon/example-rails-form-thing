@@ -64,8 +64,8 @@ class GenericAssetsController < ApplicationController
   private
     # Get a structurized, decorated generic asset
     #
-    # NOTE, this decoration is manual so it's clear what we're doing here.  We could easily use
-    # Draper's magic #decorate method, and do something similar with DataStructure.
+    # NOTE: this decoration is manual to ensure clarity and to make sure
+    # multiple decorators work the way we expect them to.
     def set_generic_asset
       # Base ORM object
       @generic_asset = GenericAsset.find(params[:id])
@@ -73,10 +73,8 @@ class GenericAssetsController < ApplicationController
       # Decorate it with our structure class
       @generic_asset = GenericAssetStructure.new(@generic_asset)
 
-      # TODO: Decorate it with the draper view decorations once we have draper
-      # stuff.  Note that the draper decorations MUST be last due to all its
-      # weird magic!
-      #@generic_asset = GenericAssetViewDecorator.new(@generic_asset)
+      # Decorate it with the render decorations
+      @generic_asset = GenericAssetRenderer.new(@generic_asset)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
