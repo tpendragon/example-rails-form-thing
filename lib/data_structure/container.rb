@@ -49,6 +49,13 @@ module DataStructure
       end
     end
 
+    # Oh, Rails... really?  All objects have a #to_param method, and it default
+    # to merely being #to_s.  Which is obviously a great idea for non-primitive
+    # objects.
+    def to_param
+      return object.to_param
+    end
+
     module ClassMethods
       def sections(*section_list)
         raise RuntimeError.new("Cannot reassign sections") if @valid_sections
