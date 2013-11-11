@@ -87,4 +87,23 @@ class GenericAssetStructure
     admin_field.subtype :full, field: :original_full_asset_path
     admin_field.subtype :conversion_specifications, field: :admin_conversion_spec
   end
+
+  # TODO: Is this useful or necessary?  Right now subtypes don't really work
+  # without the `multiple` field set to true.  More specifically, when
+  # foo_attributes= is called with data for subtype :x, the data for subtype :y
+  # is left in place, which is very confusing.  Need to either force multiple
+  # to be true for subtype data or else implement something that can do what's
+  # described below.
+  #
+  # This is a very contrived case, but this would allow a mutually exclusive
+  # field that still does delegation to subtypes.  Since multiple is not true,
+  # even though there are three separate fields, one has to be chosen, and that
+  # choice will force the other values to be cleared.  In other words, THERE
+  # CAN BE ONLY ONE.
+  #
+  #     attribute :favorite_pet_name, section: :extra_data do |f|
+  #       f.subtype :cat
+  #       f.subtype :dog
+  #       f.subtype :pig
+  #     end
 end
