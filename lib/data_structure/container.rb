@@ -9,9 +9,6 @@ module DataStructure
 
     included do
       attr_reader :attributes
-
-      @attributes = []
-      @attribute_names = {}
     end
 
     # Magic delegator to send a hash of data to the appropriate writers
