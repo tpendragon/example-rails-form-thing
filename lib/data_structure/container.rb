@@ -57,6 +57,14 @@ module DataStructure
     end
 
     module ClassMethods
+      def attributes
+        @attributes ||= []
+      end
+
+      def attribute_names
+        @attribute_names ||= {}
+      end
+
       def sections(*section_list)
         raise RuntimeError.new("Cannot reassign sections") if @valid_sections
         @valid_sections = section_list
@@ -64,15 +72,15 @@ module DataStructure
 
       # Defines an attribute on the model
       def attribute(name, options = {}, &block)
-        raise RuntimeError.new("Attribute #{name.inspect} may not be specified twice") if @attribute_names[name]
+        raise RuntimeError.new("Attribute #{name.inspect} may not be specified twice") if attribute_names[name]
 
         attr = AttributeDefinition.new(name, options, &block)
         attr.validate_section!(@valid_sections)
 
         add_translation_methods(attr) if attr.needs_translation?
 
-        @attributes << attr
-        @attribute_names[name] = attr
+        attributes << attr
+        attribute_names[name] = attr
       end
 
       def add_translation_methods(attribute)

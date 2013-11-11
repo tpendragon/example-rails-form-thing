@@ -64,6 +64,19 @@ describe DataStructure::Container do
   # Some of this belongs on the attribute classes, but as those are even less
   # certain than the container class, testing will go here for now
   describe ".attribute" do
+    it "should keep attributes on the class defining them, not a common parent" do
+      class HorribleExample < TestDecorator; end
+      class AnotherOne < TestDecorator; end
+
+      HorribleExample.attribute :foo
+      AnotherOne.attribute :bar
+
+      expect(HorribleExample.attribute_names).to include(:foo)
+      expect(HorribleExample.attribute_names).not_to include(:bar)
+      expect(AnotherOne.attribute_names).to include(:bar)
+      expect(AnotherOne.attribute_names).not_to include(:foo)
+    end
+
     context "(when sections are specified)" do
       it "should work if a valid section is given" do
         expect { TestDecorator.attribute :foo, section: :other_data }.not_to raise_error
