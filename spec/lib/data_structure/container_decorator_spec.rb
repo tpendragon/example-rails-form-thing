@@ -74,6 +74,20 @@ describe DataStructure::ContainerDecorator do
       expect(HorribleExample.attribute_names).not_to include(:bar)
       expect(AnotherOne.attribute_names).to include(:bar)
       expect(AnotherOne.attribute_names).not_to include(:foo)
+
+      Object.send(:remove_const, :HorribleExample) if Object.const_defined?(:HorribleExample)
+      Object.send(:remove_const, :AnotherOne) if Object.const_defined?(:AnotherOne)
+    end
+
+    it "should expose registered attributes on the class" do
+      class HorribleExample < TestDecorator
+        attribute :foo
+        attribute :bar
+      end
+
+      expect(HorribleExample.attributes.length).to eq(2)
+
+      Object.send(:remove_const, :HorribleExample) if Object.const_defined?(:HorribleExample)
     end
 
     context "(when sections are specified)" do
