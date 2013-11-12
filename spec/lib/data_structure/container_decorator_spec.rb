@@ -79,6 +79,42 @@ describe DataStructure::ContainerDecorator do
       Object.send(:remove_const, :AnotherOne) if Object.const_defined?(:AnotherOne)
     end
 
+    # This is an odd-looking test, but it seems I've got a bug where a single attribute works fine,
+    # but once multiple attributes exist, the last attribute definition is used for all attributes.
+    it "should work when many attributes are defined" do
+      class HorribleExample < TestDecorator
+        sections :a, :b
+
+        attribute :foo, field: :bar, section: :a
+        attribute :baz, section: :b
+        attribute :nested_1, multiple: true, section: :a do |attr|
+          attr.subtype :main
+          attr.subtype :other
+        end
+        attribute :nested_2, multiple: true, section: :a do |attr|
+          attr.subtype :main, field: :main_2
+          attr.subtype :other, field: :other_2
+        end
+      end
+
+      decoratee.class.send(:attr_accessor, :bar, :baz, :main, :other, :main_2, :other_2)
+      decoratee.bar = "bar"
+      decoratee.baz = "baz"
+      decoratee.main = "1: main"
+      decoratee.other = "1: other"
+      decoratee.main_2 = "2: main"
+      decoratee.other_2 = "2: other"
+
+      he = HorribleExample.new(decoratee)
+
+      expect(he.foo).to eq("bar")
+      expect(he.baz).to eq("baz")
+      expect(he.nested_1).to eq([{type: :main, value: "1: main"}, {type: :other, value: "1: other"}])
+      expect(he.nested_2).to eq([{type: :main, value: "2: main"}, {type: :other, value: "2: other"}])
+
+      Object.send(:remove_const, :HorribleExample) if Object.const_defined?(:HorribleExample)
+    end
+
     it "should expose registered attributes on the class" do
       class HorribleExample < TestDecorator
         attribute :foo

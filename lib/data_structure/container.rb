@@ -68,7 +68,7 @@ module DataStructure
 
         define_method(:prepare_attribute) do |name|
           @attributes ||= {}
-          @attributes[name] ||= AttributeTranslator.new(self, attribute)
+          @attributes[name] ||= AttributeTranslator.new(self, self.class.attribute_names[name])
         end
 
         define_method(reader) do
