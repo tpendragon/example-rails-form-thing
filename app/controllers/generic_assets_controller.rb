@@ -1,5 +1,7 @@
+require Rails.root.join("lib/data_structure/renderer")
+
 class GenericAssetsController < ApplicationController
-  before_action :set_generic_asset, only: [:show, :edit, :update, :destroy]
+  before_action :set_generic_asset, only: [:new, :show, :edit, :update, :destroy]
 
   # GET /generic_assets
   # GET /generic_assets.json
@@ -62,19 +64,14 @@ class GenericAssetsController < ApplicationController
   end
 
   private
-    # Get a structurized, decorated generic asset
-    #
-    # NOTE: this decoration is manual to ensure clarity and to make sure
-    # multiple decorators work the way we expect them to.
     def set_generic_asset
-      # Base ORM object
-      @generic_asset = GenericAsset.find(params[:id])
-
-      # Decorate it with our structure class
-      @generic_asset = GenericAssetStructure.new(@generic_asset)
-
-      # Decorate it with the render decorations
-      @generic_asset = GenericAssetRenderer.new(@generic_asset)
+      if (params[:id])
+        asset = GenericAsset.find(params[:id])
+      else
+        asset = GenericAsset.new
+      end
+      @generic_asset = GenericAssetStructure.new(asset)
+      @renderer = DataStructure::Renderer.new(@generic_asset)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

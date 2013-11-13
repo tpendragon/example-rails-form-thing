@@ -2,7 +2,7 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <% for section in @generic_asset.renderer.sections %>
+    <% for section in @renderer.sections.values %>
       <fieldset>
         <legend><%= section.label %></legend>
 
