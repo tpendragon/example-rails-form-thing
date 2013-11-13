@@ -31,6 +31,8 @@ module DataStructure
     end
 
     module ClassMethods
+      attr_reader :sections
+
       def attributes
         @attributes ||= []
       end
@@ -39,9 +41,10 @@ module DataStructure
         @attribute_names ||= {}
       end
 
-      def sections(*section_list)
-        raise RuntimeError.new("Cannot reassign sections") if @valid_sections
-        @valid_sections = section_list
+      def has_sections(*section_list)
+        error = "Cannot reassign sections (old: %s; new: %s)" % [@sections.inspect, section_list.inspect]
+        raise RuntimeError.new(error) if @sections
+        @sections = section_list
       end
 
       # Defines an attribute on the model
@@ -49,7 +52,7 @@ module DataStructure
         raise RuntimeError.new("Attribute #{name.inspect} may not be specified twice") if attribute_names[name]
 
         attr = AttributeDefinition.new(name, options, &block)
-        attr.validate_section!(@valid_sections)
+        attr.validate_section!(@sections)
 
         add_translation_methods(attr) if attr.needs_translation?
 
@@ -108,14 +111,14 @@ class AttributeDefinition
     block.call(self) if block
   end
 
-  def validate_section!(valid_sections)
-    if !valid_sections
+  def validate_section!(sections)
+    if !sections
       return if !section
       raise RuntimeError.new("Class must define valid sections before attributes may use sections")
     end
 
     raise RuntimeError.new("Class requires a :section option") unless section
-    raise RuntimeError.new("Invalid section #{section.inspect}") unless valid_sections.include?(section)
+    raise RuntimeError.new("Invalid section #{section.inspect}") unless sections.include?(section)
   end
 
   def subtype(name, opts = {})

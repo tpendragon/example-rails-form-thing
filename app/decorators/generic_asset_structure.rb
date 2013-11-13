@@ -18,7 +18,7 @@ class GenericAssetStructure < DataStructure::ContainerDecorator
   # grouping thing to keep related fields together.  We could have an I18n
   # lookup for the fieldset's "legend" element, and optionally allow a label
   # here.
-  sections :asset_metadata, :extra_data
+  has_sections :asset_metadata, :extra_data
 
   # Titles "attribute" - many can be chosen, but they must come in with a
   # "type" for each value.  At least one must be specified, but it doesn't

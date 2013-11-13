@@ -18,7 +18,7 @@ describe DataStructure::ContainerDecorator do
 
     class TestDecorator < DataStructure::ContainerDecorator
       decorates TestDelegatee
-      sections :asset_metadata, :other_data
+      has_sections :asset_metadata, :other_data
 
       def get
         return 1
@@ -50,13 +50,13 @@ describe DataStructure::ContainerDecorator do
     end
   end
 
-  describe ".sections" do
+  describe ".has_sections" do
     it "should create valid section data" do
-      expect(subject.class.instance_variable_get("@valid_sections")).to eq([:asset_metadata, :other_data])
+      expect(subject.class.sections).to eq([:asset_metadata, :other_data])
     end
 
     it "shouldn't allow assigning sections twice" do
-      expect { TestDecorator.sections :foo, :bar }.to raise_error(RuntimeError, /cannot reassign/i)
+      expect { TestDecorator.has_sections :foo, :bar }.to raise_error(RuntimeError, /cannot reassign/i)
     end
   end
 
@@ -83,7 +83,7 @@ describe DataStructure::ContainerDecorator do
     # but once multiple attributes exist, the last attribute definition is used for all attributes.
     it "should work when many attributes are defined" do
       class HorribleExample < TestDecorator
-        sections :a, :b
+        has_sections :a, :b
 
         attribute :foo, field: :bar, section: :a
         attribute :baz, section: :b
@@ -142,7 +142,7 @@ describe DataStructure::ContainerDecorator do
 
     context "(when no sections are specified)" do
       before(:each) do
-        TestDecorator.send(:remove_instance_variable, "@valid_sections")
+        TestDecorator.send(:remove_instance_variable, "@sections")
       end
 
       it "should work if no section is given" do
