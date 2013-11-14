@@ -1,3 +1,5 @@
+require_relative "label_translator"
+
 module DataStructure
   class Renderer
     attr_reader :sections, :model
@@ -30,7 +32,7 @@ module DataStructure
     end
 
     def label
-      LabelTranslator.new(model).translate(name)
+      LabelTranslator.new(model, name).translate
     end
   end
 

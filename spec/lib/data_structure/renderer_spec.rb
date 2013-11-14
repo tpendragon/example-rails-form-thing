@@ -1,5 +1,6 @@
 # Isolated testing for speed
 require_relative "../../../lib/data_structure/renderer"
+require_relative "../../../lib/data_structure/label_translator"
 
 describe DataStructure::Renderer do
   let(:renderee) { double("model") }
@@ -29,10 +30,8 @@ describe DataStructure::SectionRenderer do
 
   describe "#label" do
     it "should use LabelTranslator" do
-      LabelTranslator = double("label translator class")
       lt = double("label translator instance")
-
-      LabelTranslator.stub(:new).with(model).and_return(lt)
+      DataStructure::LabelTranslator.should_receive(:new).with(model, :name).and_return(lt)
       lt.stub(:translate => "translated")
 
       expect(subject.label).to eq("translated")
