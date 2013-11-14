@@ -2,23 +2,23 @@ require_relative "label_translator"
 
 module DataStructure
   class Renderer
-    attr_reader :sections, :model
+    attr_reader :section_renderers, :model
 
     def initialize(model)
       @model = model
       @class = model.class
-      setup_sections
+      setup_section_renderers
     end
 
-    def setup_sections
-      @sections = {}
+    def setup_section_renderers
+      @section_renderers = {}
       if @class.sections.nil? || @class.sections.empty?
-        @sections[nil] = SectionRenderer.new(nil, @model)
+        @section_renderers[nil] = SectionRenderer.new(nil, @model)
         return
       end
 
       for section in @class.sections
-        @sections[section] = SectionRenderer.new(section, @model)
+        @section_renderers[section] = SectionRenderer.new(section, @model)
       end
     end
   end

@@ -16,10 +16,10 @@ describe DataStructure::Renderer do
       expect(renderer.model).to eq(renderee)
     end
 
-    it "should create sections" do
-      expect(renderer.sections.length).to eq(2)
-      expect(renderer.sections[:foo]).to be_kind_of(DataStructure::SectionRenderer)
-      expect(renderer.sections[:bar]).to be_kind_of(DataStructure::SectionRenderer)
+    it "should create section renderers" do
+      expect(renderer.section_renderers.length).to eq(2)
+      expect(renderer.section_renderers[:foo]).to be_kind_of(DataStructure::SectionRenderer)
+      expect(renderer.section_renderers[:bar]).to be_kind_of(DataStructure::SectionRenderer)
     end
   end
 end
