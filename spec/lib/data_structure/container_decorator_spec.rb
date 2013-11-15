@@ -3,6 +3,18 @@
 # Isolated testing for speed
 require_relative "../../../lib/data_structure/container_decorator"
 
+# Should be a matcher, but getting those to work on complex data is apparently beyond me
+def verify_container_subtype_conversion(subtype_data, array_of_hashes)
+  expect(subtype_data.count).to eq(array_of_hashes.count)
+  while (subtype_data.any? || array_of_hashes.any?)
+    actual = subtype_data.shift
+    expected = array_of_hashes.shift
+    for key,val in expected
+      expect(actual.send(key)).to eq(val)
+    end
+  end
+end
+
 describe DataStructure::ContainerDecorator do
   let(:decoratee) { TestDelegatee.new }
   subject { TestDecorator.new(decoratee) }
@@ -109,8 +121,15 @@ describe DataStructure::ContainerDecorator do
 
       expect(he.foo).to eq("bar")
       expect(he.baz).to eq("baz")
-      expect(he.nested_1).to eq([{type: :main, value: "1: main"}, {type: :other, value: "1: other"}])
-      expect(he.nested_2).to eq([{type: :main, value: "2: main"}, {type: :other, value: "2: other"}])
+
+      verify_container_subtype_conversion(he.nested_1, [
+        {type: :main, value: "1: main"},
+        {type: :other, value: "1: other"}
+      ])
+      verify_container_subtype_conversion(he.nested_2, [
+        {type: :main, value: "2: main"},
+        {type: :other, value: "2: other"}
+      ])
 
       Object.send(:remove_const, :HorribleExample) if Object.const_defined?(:HorribleExample)
     end
@@ -248,13 +267,13 @@ describe DataStructure::ContainerDecorator do
         it "should retrieve what was set" do
           val = [{type: :bar, value: "this is bar"}, {type: :baz, value: "this is baz, but its field is qux"}]
           subject.foo = val
-          expect(subject.foo).to eq(val)
+          verify_container_subtype_conversion(subject.foo, val)
         end
 
         it "should retrieve a translation of the subtype variables' data" do
           subject.qux = "this is non-array data"
           subject.bar = [1, 2, 3]
-          expect(subject.foo).to eq([
+          verify_container_subtype_conversion(subject.foo, [
             {type: :bar, value: 1},
             {type: :bar, value: 2},
             {type: :bar, value: 3},
@@ -267,12 +286,12 @@ describe DataStructure::ContainerDecorator do
         it "should completely overwrite sub-attribute data" do
           subject.bar = "I will be removed"
           subject.qux = "I will be replaced"
-          expect(subject.foo).to eq([
+          verify_container_subtype_conversion(subject.foo, [
             {type: :bar, value: "I will be removed"},
             {type: :baz, value: "I will be replaced"}
           ])
           subject.foo = [{type: :baz, value: "test"}]
-          expect(subject.foo).to eq([{type: :baz, value: "test"}])
+          verify_container_subtype_conversion(subject.foo, [{type: :baz, value: "test"}])
         end
 
         it "should translate and store the data on the subtype variables" do
@@ -292,12 +311,15 @@ describe DataStructure::ContainerDecorator do
         it "should not change sub-attribute data that isn't explicitly part of the set value" do
           subject.bar = "I will be removed"
           subject.qux = "I will be left alone"
-          expect(subject.foo).to eq([
+          verify_container_subtype_conversion(subject.foo, [
             {type: :bar, value: "I will be removed"},
             {type: :baz, value: "I will be left alone"}
           ])
           subject.foo_attributes = [{type: :bar, value: "test"}]
-          expect(subject.foo).to eq([{type: :bar, value: "test"}, {type: :baz, value: "I will be left alone"}])
+          verify_container_subtype_conversion(subject.foo, [
+            {type: :bar, value: "test"},
+            {type: :baz, value: "I will be left alone"}
+          ])
         end
 
         it "should translate and store the data on the subtype variables" do
