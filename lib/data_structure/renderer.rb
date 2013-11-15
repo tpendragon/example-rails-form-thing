@@ -55,14 +55,16 @@ module DataStructure
     # I don't like this - probably should build a simpleform extension or a renderable view
     # template or something
     def field(form_builder)
+      attrname = @attr_definition.name
+
       if @attr_definition.subtypes.empty?
-        return form_builder.input @attr_definition.name, as: :string
+        return form_builder.input attrname, as: :string
       end
 
-      typename = @attr_definition.name
-      LabelTranslator.new(@model, typename).translate
-      label = form_builder.label @attr_definition.name
-      inputs = form_builder.fields_for(@attr_definition.name) do |f|
+      label_text = LabelTranslator.new(@model, attrname).translate
+      label = form_builder.template.content_tag :h2, label_text
+
+      inputs = form_builder.fields_for(attrname) do |f|
         type_field = f.input_field :type, :collection => subtype_options
         value_field = f.input_field :value, as: :string
 
