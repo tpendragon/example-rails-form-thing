@@ -86,13 +86,22 @@ module DataStructure
     def field_html(form_builder)
       attrname = @attr_definition.name
       template = form_builder.template
+      required = @attr_definition.required
 
       if @attr_definition.subtypes.empty?
-        return form_builder.input attrname, as: :string
+        return form_builder.input attrname, as: :string, required: required
       end
 
+      label_opts = {}
       label_text = LabelTranslator.new(@model, attrname).translate
-      label = template.content_tag :h2, label_text
+
+      if required
+        label_opts[:required] = true
+        required_text = SimpleForm::Inputs::Base.translate_required_html
+        label_text = required_text.html_safe + label_text
+      end
+
+      label = template.content_tag :h2, label_text, label_opts
 
       inputs = form_builder.fields_for(attrname) do |f|
         type_field = f.input_field :type, :collection => subtype_options
