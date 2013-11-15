@@ -182,7 +182,7 @@ class AttributeTranslator
       value = @context_model.method(attr.field).call
       next if value.nil?
       value = [value] unless value.is_a?(Array)
-      value.each {|val| data.push(type: attr.name, value: val)}
+      value.each {|val| data.push(OpenStruct.new(type: attr.name, value: val, persisted?: false))}
     end
 
     return data

@@ -7,7 +7,7 @@
         <legend><%= section_renderer.label %></legend>
 
         <% for attribute_renderer in section_renderer.attribute_renderers.values %>
-          <%= attribute_renderer.field %>
+          <%= attribute_renderer.field(f) %>
         <% end %>
       </fieldset>
     <% end %>
