@@ -3,13 +3,7 @@
 
   <div class="form-inputs">
     <% for section_renderer in @renderer.section_renderers.values %>
-      <fieldset>
-        <legend><%= section_renderer.label %></legend>
-
-        <% for attribute_renderer in section_renderer.attribute_renderers.values %>
-          <%= attribute_renderer.field(f) %>
-        <% end %>
-      </fieldset>
+      <%= section_renderer.render(f) %>
     <% end %>
   </div>
 

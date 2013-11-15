@@ -37,6 +37,23 @@ module DataStructure
       LabelTranslator.new(model, name).translate
     end
 
+    def render(builder)
+      template = builder.template
+      controls = "".html_safe
+      for attribute_renderer in attribute_renderers.values
+        controls << attribute_renderer.field(builder)
+      end
+
+      if name
+        old_controls = controls
+        controls = template.content_tag(:fieldset) do
+          template.content_tag(:legend, label) << old_controls
+        end
+      end
+
+      return controls
+    end
+
     def setup_attribute_renderers
       @attribute_renderers = {}
       for attribute in @class.attributes
