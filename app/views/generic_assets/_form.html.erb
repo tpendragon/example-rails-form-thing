@@ -2,9 +2,7 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <% for section_renderer in @renderer.section_renderers.values %>
-      <%= section_renderer.render(f) %>
-    <% end %>
+    <%= @renderer.render_inputs(f) %>
   </div>
 
   <div class="form-actions">

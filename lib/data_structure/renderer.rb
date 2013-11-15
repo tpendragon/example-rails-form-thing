@@ -21,6 +21,15 @@ module DataStructure
         @section_renderers[section] = SectionRenderer.new(section, @model)
       end
     end
+
+    def render_inputs(form_builder)
+      output = "".html_safe
+      for section_renderer in section_renderers.values
+        output << section_renderer.render(form_builder)
+      end
+
+      return output
+    end
   end
 
   class SectionRenderer
