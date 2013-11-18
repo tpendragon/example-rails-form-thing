@@ -102,12 +102,13 @@ module DataStructure
       end
 
       label = template.content_tag :h2, label_text, label_opts
+      inputs = "".html_safe
 
-      inputs = form_builder.fields_for(attrname) do |f|
-        type_field = f.input_field :type, :collection => subtype_options
-        value_field = f.input_field :value, as: :string
-
-        type_field << value_field << template.content_tag(:p)
+      @model.send(attrname).each_with_index do |item, idx|
+        field_name = "#{form_builder.object_name}[#{attrname}][#{idx}][%s]"
+        inputs << form_builder.input_field(:type, as: :select, collection: subtype_options, selected: item.type, name: field_name % :type)
+        inputs << form_builder.input_field(:value, as: :string, value: item.value, name: field_name % :value)
+        inputs << template.content_tag(:p)
       end
 
       return label << inputs
