@@ -42,8 +42,9 @@ class GenericAssetsController < ApplicationController
   # PATCH/PUT /generic_assets/1
   # PATCH/PUT /generic_assets/1.json
   def update
+    @generic_asset.assign_attributes(generic_asset_params)
     respond_to do |format|
-      if @generic_asset.update(generic_asset_params)
+      if @generic_asset.save
         format.html { redirect_to @generic_asset, notice: 'Generic asset was successfully updated.' }
         format.json { head :no_content }
       else
@@ -76,6 +77,11 @@ class GenericAssetsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def generic_asset_params
-      params.require(:generic_asset).permit(:main_title, :alternate_title, :type, :subjects, :creator, :photographer, :author)
+      params.require(:generic_asset).permit(
+        :subjects,
+        :types,
+        titles: [:type, :value],
+        creators: [:type, :value]
+      )
     end
 end
