@@ -22,3 +22,23 @@ todo
   * Customized `form_for` helper?  `structured_form_for(renderer)`
   * Some kind of context / binding magic to allow the Renderer instance access to the view data
     at the time rendering happens?
+* Figure out multiple fields JS
+  * Cocoon
+    * PRO: It's basically all built for us, and has an active codebase
+    * CON: Requires some workarounds to work with fake associations
+    * CON: Requires partials to exist; can't specify proc to build HTML or raw HTML even
+  * Cocoon-like implementation?
+    * CON: Custom means we maintain it all
+    * CON: Potentially more effort
+    * PRO: The parts of cocoon we'd rewrite are very small - ~100 lines, maybe less since
+      our implementation is simpler than what they offer
+    * PRO: Cocoon's JS is likely useable without modification
+    * ...can we use cocoon to keep the JS and just override the helpers we need to customize?
+  * Hack together quick and dirty solution
+    * Something like this: http://www.9lessons.info/2010/04/jquery-duplicate-field-form-submit-with.html
+      * JQuery plugin: http://www.andresvidal.com/labs/relcopy.html
+    * PRO: Should be very simple UI-only code
+    * CON: Not as well-maintained as Cocoon
+    * PRO: Doesn't require any "template" html - just clones a DOM element and clears out its data
+    * CON: Requires each form field (`titles`, `creators`, etc.; not one for each subtype) to exist in
+      the DOM at least in an empty state
