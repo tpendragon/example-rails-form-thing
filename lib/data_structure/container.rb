@@ -83,14 +83,6 @@ module DataStructure
           prepare_attribute(name)
           @attributes[name].set(val)
         end
-
-        if attribute.needs_attributes_writer?
-          attribute_writer = "#{name}_attributes="
-          define_method(attribute_writer) do |val|
-            prepare_attribute(name)
-            @attributes[name].attributes = val
-          end
-        end
       end
     end
   end
@@ -137,10 +129,6 @@ class AttributeDefinition
   # - "Forwarded" fields - the attribute methods need to call the real method
   def needs_translation?
     return @field != @name || @subtypes.any?
-  end
-
-  def needs_attributes_writer?
-    return @subtypes.any?
   end
 end
 
@@ -192,9 +180,13 @@ class AttributeTranslator
     return @reader.call
   end
 
-  # Converts all hashes into subtype values, not affecting subtype data which
-  # isn't explicitly set in the array of values
-  def attributes=(values)
+  # Converts all hashes into subtype values, clearing any subtypes that don't
+  # have an item in the values array
+  def set_subtype_data(values)
+    for attr in @attribute_definition.subtypes
+      @context_model.method(attr.field.to_s + "=").call(nil)
+    end
+
     data = Hash.new
 
     # First aggregate the values so we have a type-to-value map, and we ensure
@@ -210,16 +202,6 @@ class AttributeTranslator
       subtype = @attribute_definition.subtype_lookup[subtype_name]
       @context_model.method(subtype.field.to_s + "=").call(values)
     end
-  end
-
-  # Converts all hashes into subtype values, clearing any subtypes that don't
-  # have an item in the values array
-  def set_subtype_data(values)
-    for attr in @attribute_definition.subtypes
-      @context_model.method(attr.field.to_s + "=").call(nil)
-    end
-
-    self.attributes = values
   end
 
   def set(val)
