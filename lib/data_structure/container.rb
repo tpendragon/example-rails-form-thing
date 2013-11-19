@@ -115,8 +115,7 @@ class AttributeDefinition
   def translation_type
     return :subtype_array if subtypes.any?
     return :field_forward if field != name
-
-    raise "Cannot determine translation type!"
+    return nil
   end
 
   def validate_section!(sections)
@@ -165,6 +164,9 @@ class AttributeTranslator
       when :field_forward
         @reader = method(:get_field_data)
         @writer = method(:set_field_data)
+
+      else
+        raise "Cannot determine translation type!"
     end
   end
 
