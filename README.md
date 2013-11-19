@@ -22,6 +22,13 @@ todo
   * Customized `form_for` helper?  `structured_form_for(renderer)`
   * Some kind of context / binding magic to allow the Renderer instance access to the view data
     at the time rendering happens?
+  * Option: make Renderer API not expose data, require use of top-level "render" call
+    * Form builder is stored at top level once `render(form)` is called
+    * Subclasses are not directly useable
+    * All rendering logic uses view rendering so it's easier to override
+    * App-wide helpers should be kept to a minimum, but should still exist as necessary to
+      allow for overriding the more complex logic
+    * If views and helpers are completely overrideable, many other to-dos go away
 * Figure out multiple fields JS
   * Cocoon
     * PRO: It's basically all built for us, and has an active codebase
