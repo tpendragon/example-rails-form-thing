@@ -65,7 +65,7 @@ module DataStructure
         reader = name
         writer = "#{name}="
 
-        if respond_to?(reader) || respond_to?(writer)
+        if instance_methods.include?(reader) || instance_methods.include?(writer)
           raise RuntimeError.new("Cannot define an attribute which overrides existing methods (#{name.inspect})")
         end
 

@@ -202,7 +202,7 @@ describe DataStructure::ContainerDecorator do
 
       context "(when the getter or setter override existing methods)" do
         it "should raise an exception" do
-          expect { TestDecorator.attribute :to_s, section: :other_data }.to raise_error(RuntimeError, /override/)
+          expect { TestDecorator.attribute :get, section: :other_data }.to raise_error(RuntimeError, /override/)
         end
 
         it "should not modify the class" do
