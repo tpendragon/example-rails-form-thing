@@ -42,3 +42,7 @@ todo
     * PRO: Doesn't require any "template" html - just clones a DOM element and clears out its data
     * CON: Requires each form field (`titles`, `creators`, etc.; not one for each subtype) to exist in
       the DOM at least in an empty state
+* Figure out a way to better support "traditional" ORM
+  * Arrays don't auto-serialize in ActiveRecord - have different options for :multiple key?
+    * `multiple: true` means allow multiples as we do now
+    * `multiple: :serialize` means allow multiples but serialize and deserialize the array
