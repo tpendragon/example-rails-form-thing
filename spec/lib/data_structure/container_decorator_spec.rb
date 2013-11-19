@@ -322,4 +322,33 @@ describe DataStructure::ContainerDecorator do
       }.to raise_error(NotImplementedError)
     end
   end
+
+  describe "#set_subtype_data" do
+    before(:each) do
+      TestDecorator.send(:attr_accessor, :bar, :qux)
+      TestDecorator.attribute :foo, section: :other_data do |foo|
+        foo.subtype :bar
+        foo.subtype :baz, field: :qux
+      end
+    end
+
+    it "should handle Rails-like params" do
+      subject.foo = [
+        {type: :bar, value: "1"},
+        {type: :bar, value: "2"},
+        {type: :bar, value: "3"},
+        {type: :baz, value: "string"}
+      ]
+      non_rails_params_data = subject.foo.to_s
+
+      subject.foo = {
+        "0" => {"type" => "bar", "value" => "1"},
+        "1" => {"type" => "bar", "value" => "2"},
+        "2" => {"type" => "bar", "value" => "3"},
+        "3" => {"type" => "baz", "value" => "string"}
+      }
+
+      expect(non_rails_params_data).to eq(subject.foo.to_s)
+    end
+  end
 end

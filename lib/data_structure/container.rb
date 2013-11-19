@@ -189,10 +189,17 @@ class AttributeTranslator
 
     data = Hash.new
 
+    # This is necessary to support Rails params which come in as a hash where indices are keys,
+    # rather than a typical array
+    if values.is_a?(Hash)
+      values = values.collect {|index, data| data}
+    end
+
     # First aggregate the values so we have a type-to-value map, and we ensure
     # that all values are getting array-ified
     for hash in values
-      type = hash[:type]
+      hash.symbolize_keys!
+      type = hash[:type].to_sym
       data[type] ||= []
       data[type].push(hash[:value])
     end
