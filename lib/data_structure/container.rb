@@ -163,13 +163,13 @@ class AttributeTranslator
         @writer = method(:set_subtype_data)
 
       when :field_forward
-        # TODO: allow for more complex forwarding to allow for just sending straight
-        # through the model and into its datastream?
-        reader = @attribute_definition.field
-        writer = "#{reader}="
-        @reader = @context_model.method(reader)
-        @writer = @context_model.method(writer)
+        @reader = method(:get_field_data)
+        @writer = method(:set_field_data)
     end
+  end
+
+  def get_field_data
+    return @context_model.method(@attribute_definition.field).call
   end
 
   # Converts each value for each subtype into a hash of type and value
@@ -187,6 +187,11 @@ class AttributeTranslator
 
   def get
     return @reader.call
+  end
+
+  def set_field_data(values)
+    writer = "#{@attribute_definition.field}="
+    @context_model.method(writer).call(values)
   end
 
   # Converts all hashes into subtype values, clearing any subtypes that don't
