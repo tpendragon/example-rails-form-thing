@@ -94,13 +94,22 @@ class AttributeDefinition
   def initialize(name, opts = {}, &block)
     @name = name
     @subtypes = []
-    @section = opts[:section]
     @field = opts.fetch(:field, @name)
-    @multiple = opts.fetch(:multiple, false)
-    @required = opts.fetch(:required, false)
     @subtype_lookup = {}
 
-    block.call(self) if block
+    # Sub-attributes simply inherit most options from their parent, and cannot
+    # have blocks passed in
+    @parent = opts[:parent]
+    if @parent
+      @section = @parent.section
+      @multiple = @parent.multiple
+      @required = @parent.required
+    else
+      @section = opts[:section]
+      @multiple = opts.fetch(:multiple, false)
+      @required = opts.fetch(:required, false)
+      block.call(self) if block
+    end
   end
 
   def validate_section!(sections)
@@ -115,7 +124,7 @@ class AttributeDefinition
 
   def subtype(name, opts = {})
     # Subtypes can only have a name and a field delegation for now
-    attr = OpenStruct.new(name: name, field: opts[:field] || name)
+    attr = AttributeDefinition.new(name, field: opts[:field] || name, parent: self)
     subtypes << attr
     subtype_lookup[name] = attr
   end
