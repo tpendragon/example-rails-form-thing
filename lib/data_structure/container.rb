@@ -53,9 +53,7 @@ module DataStructure
 
         attr = AttributeDefinition.new(name, options, &block)
         attr.validate_section!(@sections)
-
-        add_translation_methods(attr) if attr.needs_translation?
-
+        add_translation_methods(attr) unless attr.translation_type.nil?
         attributes << attr
         attribute_names[name] = attr
       end
@@ -65,7 +63,7 @@ module DataStructure
         reader = name
         writer = "#{name}="
 
-        if respond_to?(reader) || respond_to?(writer)
+        if instance_methods.include?(reader) || instance_methods.include?(writer)
           raise RuntimeError.new("Cannot define an attribute which overrides existing methods (#{name.inspect})")
         end
 
@@ -94,13 +92,28 @@ class AttributeDefinition
   def initialize(name, opts = {}, &block)
     @name = name
     @subtypes = []
-    @section = opts[:section]
     @field = opts.fetch(:field, @name)
-    @multiple = opts.fetch(:multiple, false)
-    @required = opts.fetch(:required, false)
     @subtype_lookup = {}
 
-    block.call(self) if block
+    # Sub-attributes simply inherit most options from their parent, and cannot
+    # have blocks passed in
+    @parent = opts[:parent]
+    if @parent
+      @section = @parent.section
+      @multiple = @parent.multiple
+      @required = @parent.required
+    else
+      @section = opts[:section]
+      @multiple = opts.fetch(:multiple, false)
+      @required = opts.fetch(:required, false)
+      block.call(self) if block
+    end
+  end
+
+  def translation_type
+    return :subtype_array if subtypes.any?
+    return :field_forward if field != name
+    return nil
   end
 
   def validate_section!(sections)
@@ -115,20 +128,9 @@ class AttributeDefinition
 
   def subtype(name, opts = {})
     # Subtypes can only have a name and a field delegation for now
-    attr = OpenStruct.new(name: name, field: opts[:field] || name)
+    attr = AttributeDefinition.new(name, field: opts[:field] || name, parent: self)
     subtypes << attr
     subtype_lookup[name] = attr
-  end
-
-  # Is translation necessary?  i.e., will the base class need a reader/writer
-  # method to get and set the data?
-  #
-  # When is translation necessary?
-  # - Subtypes - the top-level attribute is *always* a translation layer because it will receive
-  #   a hash of complex data which need to be translated into the various attributes
-  # - "Forwarded" fields - the attribute methods need to call the real method
-  def needs_translation?
-    return @field != @name || @subtypes.any?
   end
 end
 
@@ -140,27 +142,23 @@ class AttributeTranslator
     setup_translators
   end
 
-  def translation_type
-    return :subtype_array if @attribute_definition.subtypes.any?
-    return :field_forward if @attribute_definition.field != @attribute_definition.name
-
-    raise "Cannot determine translation type!"
-  end
-
   def setup_translators
-    case translation_type
+    case @attribute_definition.translation_type
       when :subtype_array
         @reader = method(:get_subtype_data)
         @writer = method(:set_subtype_data)
 
       when :field_forward
-        # TODO: allow for more complex forwarding to allow for just sending straight
-        # through the model and into its datastream?
-        reader = @attribute_definition.field
-        writer = "#{reader}="
-        @reader = @context_model.method(reader)
-        @writer = @context_model.method(writer)
+        @reader = method(:get_field_data)
+        @writer = method(:set_field_data)
+
+      else
+        raise "Cannot determine translation type!"
     end
+  end
+
+  def get_field_data
+    return @context_model.method(@attribute_definition.field).call
   end
 
   # Converts each value for each subtype into a hash of type and value
@@ -178,6 +176,11 @@ class AttributeTranslator
 
   def get
     return @reader.call
+  end
+
+  def set_field_data(values)
+    writer = "#{@attribute_definition.field}="
+    @context_model.method(writer).call(values)
   end
 
   # Converts all hashes into subtype values, clearing any subtypes that don't

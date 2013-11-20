@@ -175,7 +175,7 @@ describe DataStructure::ContainerDecorator do
 
     context "(when translation is necessary)" do
       before(:each) do
-        AttributeDefinition.any_instance.stub(:needs_translation? => true)
+        AttributeDefinition.any_instance.stub(:translation_type => :field_forward)
       end
 
       it "should create a getter on the decorated class" do
@@ -202,7 +202,7 @@ describe DataStructure::ContainerDecorator do
 
       context "(when the getter or setter override existing methods)" do
         it "should raise an exception" do
-          expect { TestDecorator.attribute :to_s, section: :other_data }.to raise_error(RuntimeError, /override/)
+          expect { TestDecorator.attribute :get, section: :other_data }.to raise_error(RuntimeError, /override/)
         end
 
         it "should not modify the class" do
@@ -218,7 +218,7 @@ describe DataStructure::ContainerDecorator do
 
     context "(when translation isn't necessary)" do
       before(:each) do
-        AttributeDefinition.any_instance.stub(:needs_translation? => false)
+        AttributeDefinition.any_instance.stub(:translation_type => nil)
       end
 
       it "should create a getter on the decorated class" do
