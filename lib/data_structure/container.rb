@@ -53,9 +53,7 @@ module DataStructure
 
         attr = AttributeDefinition.new(name, options, &block)
         attr.validate_section!(@sections)
-
-        add_translation_methods(attr) if attr.needs_translation?
-
+        add_translation_methods(attr) unless attr.translation_type.nil?
         attributes << attr
         attribute_names[name] = attr
       end
@@ -133,17 +131,6 @@ class AttributeDefinition
     attr = AttributeDefinition.new(name, field: opts[:field] || name, parent: self)
     subtypes << attr
     subtype_lookup[name] = attr
-  end
-
-  # Is translation necessary?  i.e., will the base class need a reader/writer
-  # method to get and set the data?
-  #
-  # When is translation necessary?
-  # - Subtypes - the top-level attribute is *always* a translation layer because it will receive
-  #   a hash of complex data which need to be translated into the various attributes
-  # - "Forwarded" fields - the attribute methods need to call the real method
-  def needs_translation?
-    return @field != @name || @subtypes.any?
   end
 end
 

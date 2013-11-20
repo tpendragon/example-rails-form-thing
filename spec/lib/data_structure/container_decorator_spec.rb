@@ -175,7 +175,7 @@ describe DataStructure::ContainerDecorator do
 
     context "(when translation is necessary)" do
       before(:each) do
-        AttributeDefinition.any_instance.stub(:needs_translation? => true)
+        AttributeDefinition.any_instance.stub(:translation_type => :field_forward)
       end
 
       it "should create a getter on the decorated class" do
@@ -218,7 +218,7 @@ describe DataStructure::ContainerDecorator do
 
     context "(when translation isn't necessary)" do
       before(:each) do
-        AttributeDefinition.any_instance.stub(:needs_translation? => false)
+        AttributeDefinition.any_instance.stub(:translation_type => nil)
       end
 
       it "should create a getter on the decorated class" do
