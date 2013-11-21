@@ -52,6 +52,23 @@ Long-term goals include:
       * Views based on context
     * Controlled vocabulary
 
+Caveats
+---
+
+Make sure you never use a field that is exactly the same as an attribute or
+subtype name.  For right now, the system doesn't protect you from defining a
+structure that does this.  If you have a subtype use the same field as its
+parent's name, implicitly or explicitly, you'll get a "stack level too deep"
+error.  But in other cases, you'll just have one attribute calling another,
+making it just look *really* weird, especially if both fields are empty (you
+won't see anything wrong).
+
+Be careful that your attribute and subtype names are how you want to interact
+with your object, and use the `field` key in places where the field isn't a
+good fit for the API.  Since the renderer's labels for various things are based
+on the attribute name, you'll have a much better out of the box experience if
+the attribute name is what you wish to display.
+
 todo
 ---
 
