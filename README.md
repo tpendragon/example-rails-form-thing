@@ -30,8 +30,7 @@ For decoration, create a subclass of the container decorator.  For an example, s
 for the [GenericAssetStructure](app/decorators/generic_asset_structure.rb).  To see how that example
 works nicely with ActiveRecord, check out [GenericAsset](app/models/generic_asset.rb).
 
-***Note**: Mixing [DataStructure::Container](lib/data_structure/container.rb) into your ORM
-class should work, but has not yet been tested directly.*
+**Note**: *Mixing [DataStructure::Container](lib/data_structure/container.rb) into your ORM class should work, but has not yet been tested directly.*
 
 In your decorated class, you define your attributes and their options.  Note that if a field is
 not defined, it is assumed that the attribute's name will match an accessor directly.
