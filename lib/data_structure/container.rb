@@ -201,6 +201,8 @@ class AttributeTranslator
     # First aggregate the values so we have a type-to-value map, and we ensure
     # that all values are getting array-ified
     for hash in values
+      # ActionController::Parameters isn't an actual hash!
+      hash = hash.to_hash
       hash.symbolize_keys!
       type = hash[:type].to_sym
       data[type] ||= []

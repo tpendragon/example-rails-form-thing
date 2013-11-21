@@ -51,10 +51,10 @@ class GenericAssetStructure < DataStructure::ContainerDecorator
     # behind-the-scenes magic which turns that into a dynamic attribute on the
     # model *and* the datastream.  That's pretty OD-specific, though, so I
     # need to think it through some.
-    title.subtype :main, field: :main_title
+    title.subtype :main, field: :main_titles
 
-    title.subtype :alternate, field: :alt_title
-    title.subtype :parallel, field: :parallel_title
+    title.subtype :alternate, field: :alt_titles
+    title.subtype :parallel, field: :parallel_titles
 
     # If field isn't specified, it defaults to attribute name - for subtypes,
     # this can be a bit confusing, because :series might mean something
@@ -65,9 +65,9 @@ class GenericAssetStructure < DataStructure::ContainerDecorator
 
   # Not required, but otherwise similar to titles
   attribute :creators, multiple: true, section: :asset_metadata do |creator|
-    creator.subtype :creator
-    creator.subtype :photographer
-    creator.subtype :author
+    creator.subtype :creator, field: :creator_array
+    creator.subtype :photographer, field: :photographers
+    creator.subtype :author, field: :authors
   end
 
   # Simple field for allowing multiple subjects to be entered, requiring at
@@ -80,11 +80,11 @@ class GenericAssetStructure < DataStructure::ContainerDecorator
   attribute :type, required: true, section: :asset_metadata
 
   # Administrative data goes in its own section - this would probably be read-only for most roles,
-  # but for OD I think that would just be part of the decorator or something
+  # but for OD I think that would just be part of a more view-oriented decorator or something
   attribute :administrative, multiple: true, section: :extra_data do |admin_field|
-    admin_field.subtype :replaces, field: :admin_replaces
-    admin_field.subtype :full, field: :original_full_asset_path
-    admin_field.subtype :conversion_specifications, field: :admin_conversion_spec
+    admin_field.subtype :replaces, field: :admin_replaces_array
+    admin_field.subtype :full, field: :original_full_asset_path_array
+    admin_field.subtype :conversion_specifications, field: :admin_conversion_spec_array
   end
 
   # TODO: Is this useful or necessary?  Right now subtypes don't really work
