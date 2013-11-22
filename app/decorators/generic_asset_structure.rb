@@ -75,9 +75,10 @@ class GenericAssetStructure < DataStructure::ContainerDecorator
   # directly at the top level.
   attribute :subjects, multiple: true, required: true, section: :asset_metadata, field: :subject_array
 
-  # `Type` field has no subtypes and doesn't allow multiple values, so it's
-  # just a standard text field with a label.
-  attribute :type, required: true, section: :asset_metadata
+  # `asset_type` field has no subtypes and doesn't allow multiple values, so
+  # it's just a standard text field with a label.  No magic happens here, data
+  # just goes straight through to the underlying model.
+  attribute :asset_type, required: true, section: :asset_metadata
 
   # Administrative data goes in its own section - this would probably be read-only for most roles,
   # but for OD I think that would just be part of a more view-oriented decorator or something

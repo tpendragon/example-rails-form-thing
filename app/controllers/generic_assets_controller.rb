@@ -79,7 +79,7 @@ class GenericAssetsController < ApplicationController
     def generic_asset_params
       params.require(:generic_asset).permit(
         :subjects,
-        :types,
+        :asset_type,
         titles: [:type, :value],
         creators: [:type, :value]
       )

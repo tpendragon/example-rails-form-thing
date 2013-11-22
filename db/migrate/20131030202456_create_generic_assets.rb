@@ -12,7 +12,7 @@ class CreateGenericAssets < ActiveRecord::Migration
 
       t.string :subjects
 
-      t.string :type
+      t.string :asset_type
 
       t.string :admin_replaces
       t.string :original_full_asset_path

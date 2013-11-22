@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20131030202456) do
     t.string   "photographer"
     t.string   "author"
     t.string   "subjects"
-    t.string   "type"
+    t.string   "asset_type"
     t.string   "admin_replaces"
     t.string   "original_full_asset_path"
     t.string   "admin_conversion_spec"
