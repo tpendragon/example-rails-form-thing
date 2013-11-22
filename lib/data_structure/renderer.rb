@@ -106,7 +106,25 @@ module DataStructure
 
       @model.send(attrname).each_with_index do |item, idx|
         field_name = "#{form_builder.object_name}[#{attrname}][#{idx}][%s]"
-        inputs << form_builder.input_field(:type, as: :select, collection: subtype_options, selected: item.type, name: field_name % :type)
+
+        # This is an awful hack, but for some reason, even when a value is
+        # specified in `:selected`, the core Rails API calls the method for the
+        # field being created.  That would be `:type` in this case, which won't
+        # likely exist.  The value is thrown out, but retrieved all the
+        # same... ???
+        method = :__magic_type
+        obj = form_builder.object
+        unless (obj.respond_to?(method))
+          obj.define_singleton_method(method) { "" }
+        end
+
+        inputs << form_builder.input_field(method,
+          as: :select,
+          collection: subtype_options,
+          selected: item.type,
+          name: field_name % :type
+        )
+
         inputs << form_builder.input_field(:value, as: :string, value: item.value, name: field_name % :value)
         inputs << template.content_tag(:p)
       end
