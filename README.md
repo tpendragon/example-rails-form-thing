@@ -115,6 +115,8 @@ Stuff I need to track that belongs in issues maybe, but meh
     * PRO: Doesn't require any "template" html - just clones a DOM element and clears out its data
     * CON: Requires each form field (`titles`, `creators`, etc.; not one for each subtype) to exist in
       the DOM at least in an empty state
+* Apply multiple fields UI to non-subtype attributes ("subjects" field
+  currently just shows CSV instead of the expected multiple entries)
 * Extract structure into a gem, renderer into a separate gem which depends on structure
   * Structure can apply to any project even without a web front-end
   * Renderer is very specific to a Rails project using simpleform right now
